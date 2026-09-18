@@ -1,0 +1,17 @@
+# Design docs kept local only, not published to git
+DATA-MODEL.md
+FEATURES.md
+
+# IDE
+.idea/
+*.iml
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# OS
+.DS_Store
+
+# Soal assessment, bukan bagian project
+*.pdf
