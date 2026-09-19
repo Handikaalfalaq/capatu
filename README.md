@@ -1,4 +1,4 @@
-# Capatu (Catat Sepatu)
+# Capatu (Catatan Sepatu)
 
 Aplikasi dokumentasi & manajemen sepatu (lari, hiking, dan jenis lainnya) untuk pemakaian pribadi. Capatu mendokumentasikan riwayat/jejak setiap sepatu kapan dipakai, untuk apa, sudah berapa jauh, dan kapan terakhir dirawat sehingga pengguna tahu kapan waktunya mencuci atau mengganti sepatu.
 
