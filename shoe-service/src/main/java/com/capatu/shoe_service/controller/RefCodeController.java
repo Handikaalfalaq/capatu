@@ -3,6 +3,7 @@ package com.capatu.shoe_service.controller;
 
 import com.capatu.shoe_service.constant.MessageConstants;
 import com.capatu.shoe_service.dto.request.RefCodeRequest;
+import com.capatu.shoe_service.dto.request.SearchCriteria;
 import com.capatu.shoe_service.dto.response.ApiResponse;
 import com.capatu.shoe_service.service.RefCodeService;
 import jakarta.validation.Valid;
@@ -30,6 +31,11 @@ public class RefCodeController {
     @GetMapping("/type/{type}")
     public ResponseEntity<?> getByType(@PathVariable String type) {
         return ResponseEntity.ok(refCodeService.allRefCodeByType(type));
+    }
+
+    @PostMapping("/pageable")
+    public ResponseEntity<?> getPageableByFilters(@Valid @RequestBody SearchCriteria searchCriteria) {
+        return ResponseEntity.ok(refCodeService.getPageableByFilters(searchCriteria));
     }
 
     @GetMapping("/{id}")
