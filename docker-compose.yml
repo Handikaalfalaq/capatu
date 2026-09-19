@@ -1,0 +1,15 @@
+services:
+  shoe-db:
+    image: postgres:16
+    container_name: capatu-shoe-db
+    environment:
+      POSTGRES_DB: capatu_shoe
+      POSTGRES_USER: capatu
+      POSTGRES_PASSWORD: capatu
+    ports:
+      - "5433:5432"
+    volumes:
+      - capatu-shoe-data:/var/lib/postgresql/data
+
+volumes:
+  capatu-shoe-data:
