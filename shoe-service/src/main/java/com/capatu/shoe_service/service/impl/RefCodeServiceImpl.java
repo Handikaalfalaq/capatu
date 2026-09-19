@@ -2,13 +2,22 @@ package com.capatu.shoe_service.service.impl;
 
 import com.capatu.shoe_service.constant.MessageConstants;
 import com.capatu.shoe_service.dto.request.RefCodeRequest;
+import com.capatu.shoe_service.dto.request.SearchCriteria;
+import com.capatu.shoe_service.dto.response.PageResponse;
+import com.capatu.shoe_service.dto.response.RefCodeItemResponse;
 import com.capatu.shoe_service.dto.response.RefCodeResponse;
 import com.capatu.shoe_service.entity.RefCodeModel;
 import com.capatu.shoe_service.repository.RefCodeRepository;
 import com.capatu.shoe_service.service.RefCodeService;
+import com.capatu.shoe_service.specification.GenericSpecification;
+import com.capatu.shoe_service.utils.SortUtils;
 import com.capatu.shoe_service.utils.TypeNameUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,6 +38,21 @@ public class RefCodeServiceImpl implements RefCodeService {
     @Override
     public List<RefCodeModel> allRefCodeByType(String type){
         return refCodeRepository.allRefCodeByType(type);
+    }
+
+    @Override
+    public PageResponse<RefCodeItemResponse> getPageableByFilters(SearchCriteria searchCriteria){
+        int page = searchCriteria.getPage() != null ? searchCriteria.getPage() : MessageConstants.DEFAULT_PAGE;
+        int size = searchCriteria.getSize() != null ? searchCriteria.getSize() : MessageConstants.DEFAULT_SIZE;
+
+        Specification<RefCodeModel> specification =
+                GenericSpecification.fromFilters(RefCodeModel.class, searchCriteria.getFilters());
+        Pageable pageable = PageRequest.of(page, size,
+                SortUtils.toSort(searchCriteria.getSorts(), RefCodeModel.class, MessageConstants.DEFAULT_SORT_FIELD));
+
+        Page<RefCodeModel> result = refCodeRepository.findAll(specification, pageable);
+
+        return PageResponse.from(result.map(RefCodeItemResponse::from));
     }
 
     @Override
@@ -70,7 +94,9 @@ public class RefCodeServiceImpl implements RefCodeService {
         refCodeExisting.setCode(code);
         refCodeExisting.setCodeName(request.getCodeName().trim());
         refCodeExisting.setDescription(request.getDescription());
-        refCodeExisting.setIsActive(request.getIsActive());
+        if (request.getIsActive() != null) {
+            refCodeExisting.setIsActive(request.getIsActive());
+        }
 
         refCodeRepository.save(refCodeExisting);
     }
