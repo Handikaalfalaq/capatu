@@ -43,7 +43,6 @@ public class ShoeServiceImpl implements ShoeService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ShoeModel findById(Long id){
         return shoeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -115,11 +114,11 @@ public class ShoeServiceImpl implements ShoeService {
         return features;
     }
 
-    private ShoeModel shoeModel(ShoeModel shoeModel, ShoeRequest request, RefCodeModel shoeType, Set<RefCodeModel> features){
+    private ShoeModel shoeModel(ShoeModel shoeModel, ShoeRequest request, RefCodeModel refCodeModel, Set<RefCodeModel> features){
         shoeModel.setName(request.getName());
         shoeModel.setBrand(request.getBrand());
         shoeModel.setModel(request.getModel());
-        shoeModel.setShoeTypeRef(shoeType);
+        shoeModel.setShoeTypeRef(refCodeModel);
         shoeModel.setColor(request.getColor());
         shoeModel.setSizeValue(request.getSizeValue());
         shoeModel.setSizeSystem(request.getSizeSystem());
