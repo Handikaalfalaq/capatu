@@ -22,6 +22,4 @@ public class RefCodeRequest {
     private String codeName;
 
     private String description;
-
-    private Boolean isActive;
 }
