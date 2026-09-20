@@ -24,7 +24,7 @@ public class ShoeController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> findAllCode() {
+    public ResponseEntity<?> findAll() {
         return ResponseEntity.ok(shoeService.findAll());
     }
 

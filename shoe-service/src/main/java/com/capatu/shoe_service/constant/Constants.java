@@ -1,5 +1,7 @@
 package com.capatu.shoe_service.constant;
 
+import java.math.BigDecimal;
+
 public final class Constants {
 
     private Constants() {
@@ -7,6 +9,7 @@ public final class Constants {
 
     public static final String RESOURCE_REF_CODE = "Referensi code";
     public static final String RESOURCE_SHOE = "shoe";
+    public static final String RESOURCE_USAGE_LOG = "usage log";
 
     public static final String CREATED = "%s berhasil dibuat";
     public static final String UPDATED = "%s berhasil diubah";
@@ -19,6 +22,12 @@ public final class Constants {
 
     public static final String INVALID_SHOE_TYPE_REF = "shoeTypeRefId tidak valid, harus id jenis sepatu";
     public static final String INVALID_FEATURE_REF = "featureRefIds tidak valid, id %s bukan fitur sepatu";
+
+    public static final String INVALID_ACTIVITY_TYPE_REF = "activityTypeRefId tidak valid, harus id jenis aktivitas";
+    public static final String SHOE_RETIRED = "%s sudah pensiun dan tidak bisa mencatat pemakaian baru";
+    public static final String USAGE_BEFORE_PURCHASE = "activityDate tidak boleh sebelum tanggal beli sepatu (%s)";
+    public static final String SHOE_CANNOT_CHANGE = "Sepatu pada %s tidak bisa diubah";
+    public static final String INVALID_RANGE = "Rentang %s tidak valid, nilai awal lebih besar dari nilai akhir";
 
 
     public static final String NAME_FORMAT = "^ *[A-Za-z][A-Za-z0-9 ]*$";
@@ -41,6 +50,8 @@ public final class Constants {
     public static final int DEFAULT_PAGE = 0;
     public static final int DEFAULT_SIZE = 10;
     public static final String DEFAULT_SORT_FIELD = "id";
+
+    public static final BigDecimal MAX_DISTANCE_KM = new BigDecimal("9999.99");
 
     public static final String SHOE_TYPE = "SHOE_TYPE";
     public static final String SHOE_FEATURE = "SHOE_FEATURE";
