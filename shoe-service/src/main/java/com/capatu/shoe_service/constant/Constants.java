@@ -59,6 +59,13 @@ public final class Constants {
 
     public static final BigDecimal MAX_DISTANCE_KM = new BigDecimal("9999.99");
 
+    public static final int DEFAULT_STATS_DAYS = 30;
+    public static final int MAX_STATS_DAYS = 365;
+    public static final BigDecimal DEFAULT_LIFE_THRESHOLD = new BigDecimal("10");
+    public static final BigDecimal UNHEALTHY_ROTATION_PERCENT = new BigDecimal("70");
+    public static final String INVALID_STATS_DAYS = "days harus antara 1 dan %d";
+    public static final String INVALID_THRESHOLD = "threshold harus antara 0 dan 100";
+
     public static final String SHOE_TYPE = "SHOE_TYPE";
     public static final String SHOE_FEATURE = "SHOE_FEATURE";
     public static final String ACTIVITY_TYPE = "ACTIVITY_TYPE";
