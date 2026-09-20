@@ -47,7 +47,7 @@ public class ShoeServiceImpl implements ShoeService {
     public ShoeModel findById(Long id){
         return shoeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, Constants.NOT_FOUND.formatted(Constants.RESOURCE_REF_CODE)));
+                        HttpStatus.NOT_FOUND, Constants.NOT_FOUND.formatted(Constants.RESOURCE_SHOE)));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class ShoeServiceImpl implements ShoeService {
             shoeRepository.delete(shoeModel);
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    Constants.IN_USE.formatted(Constants.RESOURCE_REF_CODE));
+                    Constants.IN_USE.formatted(Constants.RESOURCE_SHOE));
         }
     }
 
