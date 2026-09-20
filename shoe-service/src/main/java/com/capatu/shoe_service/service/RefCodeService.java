@@ -1,9 +1,8 @@
 package com.capatu.shoe_service.service;
 
 import com.capatu.shoe_service.dto.request.RefCodeRequest;
-import com.capatu.shoe_service.dto.request.SearchCriteria;
+import com.capatu.shoe_service.dto.request.RefCodeSearchRequest;
 import com.capatu.shoe_service.dto.response.PageResponse;
-import com.capatu.shoe_service.dto.response.RefCodeItemResponse;
 import com.capatu.shoe_service.dto.response.RefCodeResponse;
 import com.capatu.shoe_service.entity.RefCodeModel;
 
@@ -15,7 +14,7 @@ public interface RefCodeService {
 
     List<RefCodeModel> allRefCodeByType(String type);
 
-    PageResponse<RefCodeItemResponse> getPageableByFilters(SearchCriteria searchCriteria);
+    PageResponse<RefCodeModel> getPageableByFilters(RefCodeSearchRequest request);
 
     RefCodeModel findById(Long id);
 
