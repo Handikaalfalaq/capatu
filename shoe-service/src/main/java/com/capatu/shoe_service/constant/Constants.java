@@ -13,6 +13,7 @@ public final class Constants {
     public static final String DELETED = "%s berhasil dihapus";
     public static final String NOT_FOUND = "%s tidak ditemukan";
     public static final String IN_USE = "%s masih digunakan dan tidak bisa dihapus";
+    public static final String TYPE_IN_USE = "%s masih digunakan dan type-nya tidak bisa diubah";
 
     public static final String CODE_ALREADY_EXISTS = "Kode %s sudah ada untuk type %s";
 
