@@ -17,3 +17,27 @@ Capatu menjawab masalah ini dengan mendokumentasikan setiap pemakaian sepatu dan
 - **Log pemakaian** — catat tiap kali sepatu dipakai (tanggal, jarak, jenis aktivitas), otomatis terakumulasi ke total jarak sepatu.
 - **Log perawatan** — catat kapan terakhir dicuci/diperbaiki.
 - **Reminder otomatis** — waktunya cuci, waktunya ganti, atau rotasi pemakaian yang tidak sehat antar sepatu.
+
+## Cara Menjalankan
+
+Yang dibutuhkan hanya Docker dan Docker Compose. Pastikan port 8081, 8082, 5433, dan 5434 tidak sedang dipakai.
+
+Dari folder project:
+
+```bash
+docker compose up -d --build
+```
+
+Perintah ini menyalakan empat container: `shoe-service` (port 8081), `reminder-service` (port 8082), dan database Postgres masing-masing. Tabel dan data contoh dibuat otomatis. Tunggu sekitar 1 menit sampai kedua aplikasi selesai start, lalu coba:
+
+```bash
+curl http://localhost:8081/api/v1/shoe
+curl http://localhost:8082/api/v1/reminders
+```
+
+Untuk menghentikan:
+
+```bash
+docker compose down        # data tetap tersimpan
+docker compose down -v     # data ikut dihapus
+```
