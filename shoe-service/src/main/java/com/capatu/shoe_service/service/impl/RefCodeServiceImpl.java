@@ -59,9 +59,9 @@ public class RefCodeServiceImpl implements RefCodeService {
 
         RefCodeModel refCodeModel = new RefCodeModel();
         refCodeModel.setType(type);
-        refCodeModel.setTypeName(request.getTypeName());
+        refCodeModel.setTypeName(TypeNameUtils.normalize(request.getTypeName()));
         refCodeModel.setCode(code);
-        refCodeModel.setCodeName(request.getCodeName().trim());
+        refCodeModel.setCodeName(TypeNameUtils.tidy(request.getCodeName()));
         refCodeModel.setDescription(request.getDescription());
 
         refCodeRepository.save(refCodeModel);
@@ -74,12 +74,23 @@ public class RefCodeServiceImpl implements RefCodeService {
         String type = TypeNameUtils.toType(request.getTypeName());
         String code = TypeNameUtils.toType(request.getCodeName());
 
+        boolean typeChanged = !refCodeExisting.getType().equals(type);
+        boolean codeChanged = !refCodeExisting.getCode().equals(code);
+
+        if ((typeChanged || codeChanged) && refCodeRepository.isInUse(id)) {
+            if (typeChanged) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT,
+                        Constants.TYPE_IN_USE.formatted(Constants.RESOURCE_REF_CODE));
+            }
+            code = refCodeExisting.getCode();
+        }
+
         validateUniqueCodeType(request, type, code, id);
 
         refCodeExisting.setType(type);
-        refCodeExisting.setTypeName(request.getTypeName());
+        refCodeExisting.setTypeName(TypeNameUtils.normalize(request.getTypeName()));
         refCodeExisting.setCode(code);
-        refCodeExisting.setCodeName(request.getCodeName().trim());
+        refCodeExisting.setCodeName(TypeNameUtils.tidy(request.getCodeName()));
         refCodeExisting.setDescription(request.getDescription());
 
         refCodeRepository.save(refCodeExisting);
