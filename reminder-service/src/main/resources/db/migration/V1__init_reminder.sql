@@ -7,7 +7,6 @@ CREATE TABLE reminder (
     message           VARCHAR(255) NOT NULL,
     status            VARCHAR(20)  NOT NULL,
     detected_at       TIMESTAMP    NOT NULL,
-    acknowledged_at   TIMESTAMP,
     resolved_at       TIMESTAMP,
 
     creation_time     TIMESTAMP    NOT NULL DEFAULT now(),
@@ -16,9 +15,9 @@ CREATE TABLE reminder (
     modified_by       VARCHAR(100) NOT NULL DEFAULT 'system',
     CONSTRAINT ck_reminder_type CHECK (type IN ('WASH', 'REPLACE', 'ROTATION')),
     CONSTRAINT ck_reminder_severity CHECK (severity IN ('INFO', 'WARNING', 'CRITICAL')),
-    CONSTRAINT ck_reminder_status CHECK (status IN ('ACTIVE', 'ACKNOWLEDGED', 'RESOLVED'))
+    CONSTRAINT ck_reminder_status CHECK (status IN ('ACTIVE', 'RESOLVED'))
 );
 
-CREATE UNIQUE INDEX uq_reminder_open ON reminder (shoe_id, type) WHERE status IN ('ACTIVE', 'ACKNOWLEDGED');
+CREATE UNIQUE INDEX uq_reminder_open ON reminder (shoe_id, type) WHERE status = 'ACTIVE';
 
 CREATE INDEX idx_reminder_status ON reminder (status);
