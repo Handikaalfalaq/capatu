@@ -10,6 +10,7 @@ public final class Constants {
     public static final String RESOURCE_REF_CODE = "Referensi code";
     public static final String RESOURCE_SHOE = "shoe";
     public static final String RESOURCE_USAGE_LOG = "usage log";
+    public static final String RESOURCE_MAINTENANCE_LOG = "maintenance log";
 
     public static final String CREATED = "%s berhasil dibuat";
     public static final String UPDATED = "%s berhasil diubah";
@@ -28,6 +29,11 @@ public final class Constants {
     public static final String USAGE_BEFORE_PURCHASE = "activityDate tidak boleh sebelum tanggal beli sepatu (%s)";
     public static final String SHOE_CANNOT_CHANGE = "Sepatu pada %s tidak bisa diubah";
     public static final String INVALID_RANGE = "Rentang %s tidak valid, nilai awal lebih besar dari nilai akhir";
+
+    public static final String INVALID_MAINTENANCE_ACTION_REF = "actionRefId tidak valid, harus id tindakan perawatan";
+    public static final String SHOE_RETIRED_MAINTENANCE = "%s sudah pensiun dan tidak bisa mencatat perawatan baru";
+    public static final String ACTION_BEFORE_PURCHASE = "actionDate tidak boleh sebelum tanggal beli sepatu (%s)";
+    public static final String WASH_CODE = "CUCI";
 
 
     public static final String NAME_FORMAT = "^ *[A-Za-z][A-Za-z0-9 ]*$";
