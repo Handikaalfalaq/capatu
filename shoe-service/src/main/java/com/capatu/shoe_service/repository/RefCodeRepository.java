@@ -23,4 +23,12 @@ public interface RefCodeRepository extends JpaRepository<RefCodeModel, Long>, Jp
 
     List<RefCodeModel> findByIdInAndType(Collection<Long> ids, String type);
 
+    @Query(value = """
+            SELECT EXISTS (SELECT 1 FROM shoe             WHERE shoe_type_ref_id     = :id)
+                OR EXISTS (SELECT 1 FROM shoe_feature_map WHERE feature_ref_id       = :id)
+                OR EXISTS (SELECT 1 FROM usage_log        WHERE activity_type_ref_id = :id)
+                OR EXISTS (SELECT 1 FROM maintenance_log  WHERE action_ref_id        = :id)
+            """, nativeQuery = true)
+    boolean isInUse(@Param("id") Long id);
+
 }
