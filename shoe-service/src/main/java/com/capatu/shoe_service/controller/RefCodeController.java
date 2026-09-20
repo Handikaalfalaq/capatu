@@ -1,9 +1,9 @@
 package com.capatu.shoe_service.controller;
 
 
-import com.capatu.shoe_service.constant.MessageConstants;
+import com.capatu.shoe_service.constant.Constants;
 import com.capatu.shoe_service.dto.request.RefCodeRequest;
-import com.capatu.shoe_service.dto.request.SearchCriteria;
+import com.capatu.shoe_service.dto.request.RefCodeSearchRequest;
 import com.capatu.shoe_service.dto.response.ApiResponse;
 import com.capatu.shoe_service.service.RefCodeService;
 import jakarta.validation.Valid;
@@ -34,8 +34,8 @@ public class RefCodeController {
     }
 
     @PostMapping("/pageable")
-    public ResponseEntity<?> getPageableByFilters(@Valid @RequestBody SearchCriteria searchCriteria) {
-        return ResponseEntity.ok(refCodeService.getPageableByFilters(searchCriteria));
+    public ResponseEntity<?> getPageableByFilters(@Valid @RequestBody RefCodeSearchRequest request) {
+        return ResponseEntity.ok(refCodeService.getPageableByFilters(request));
     }
 
     @GetMapping("/{id}")
@@ -48,7 +48,7 @@ public class RefCodeController {
         refCodeService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse(HttpStatus.CREATED.value(),
-                        MessageConstants.CREATED.formatted(MessageConstants.RESOURCE_REF_CODE)));
+                        Constants.CREATED.formatted(Constants.RESOURCE_REF_CODE)));
     }
 
     @PutMapping("/{id}")
@@ -56,7 +56,7 @@ public class RefCodeController {
         refCodeService.update(id, request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(HttpStatus.OK.value(),
-                        MessageConstants.UPDATED.formatted(MessageConstants.RESOURCE_REF_CODE)));
+                        Constants.UPDATED.formatted(Constants.RESOURCE_REF_CODE)));
     }
 
     @DeleteMapping("/{id}")
@@ -64,6 +64,6 @@ public class RefCodeController {
         refCodeService.delete(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(HttpStatus.OK.value(),
-                        MessageConstants.DELETED.formatted(MessageConstants.RESOURCE_REF_CODE)));
+                        Constants.DELETED.formatted(Constants.RESOURCE_REF_CODE)));
     }
 }

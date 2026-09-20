@@ -7,17 +7,20 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public interface RefCodeRepository extends JpaRepository<RefCodeModel, Long>, JpaSpecificationExecutor<RefCodeModel> {
 
-    @Query("SELECT DISTINCT r.type AS type, r.typeName AS typeName FROM RefCodeModel r WHERE r.isActive = true ORDER BY r.type ASC")
+    @Query("SELECT DISTINCT r.type AS type, r.typeName AS typeName FROM RefCodeModel r ORDER BY r.type ASC")
     List<RefCodeResponse> findAllCode();
 
-    @Query("SELECT r FROM RefCodeModel r WHERE r.type = :type AND r.isActive = true ORDER BY r.id ASC")
+    @Query("SELECT r FROM RefCodeModel r WHERE r.type = :type ORDER BY r.id ASC")
     List<RefCodeModel> allRefCodeByType(@Param("type") String type);
 
     Optional<RefCodeModel> findByTypeAndCode(String type, String code);
+
+    List<RefCodeModel> findByIdInAndType(Collection<Long> ids, String type);
 
 }
