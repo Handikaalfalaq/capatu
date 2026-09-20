@@ -6,7 +6,6 @@ CREATE TABLE ref_code (
     code              VARCHAR(50)  NOT NULL,
     code_name         VARCHAR(50)  NOT NULL,
     description       TEXT,
-    is_active         BOOLEAN      NOT NULL DEFAULT TRUE,
 
     creation_time     TIMESTAMP    NOT NULL DEFAULT now(),
     modification_time TIMESTAMP    NOT NULL DEFAULT now(),

@@ -15,6 +15,10 @@ public final class MessageConstants {
 
     public static final String CODE_ALREADY_EXISTS = "Kode %s sudah ada untuk type %s";
 
+    // Sepatu: id ref_code yang dikirim harus bertipe yang benar
+    public static final String INVALID_SHOE_TYPE_REF = "shoeTypeRefId tidak valid, harus id jenis sepatu";
+    public static final String INVALID_FEATURE_REF = "featureRefIds tidak valid, id %s bukan fitur sepatu";
+
 
     public static final String NAME_FORMAT = "^ *[A-Za-z][A-Za-z0-9 ]*$";
 
@@ -25,12 +29,13 @@ public final class MessageConstants {
     public static final String VALIDATION_MIN_VALUE = "minimal {value}";
     public static final String VALIDATION_MAX_VALUE = "maksimal {value}";
 
-    public static final String SORT_DIRECTION_FORMAT = "(?i)^(ASC|DESC)$";
-    public static final String VALIDATION_SORT_DIRECTION = "harus ASC atau DESC";
+    public static final String VALIDATION_POSITIVE = "harus lebih dari 0";
+    public static final String VALIDATION_POSITIVE_OR_ZERO = "tidak boleh negatif";
+    public static final String VALIDATION_PAST_OR_PRESENT = "tidak boleh di masa depan";
+    public static final String VALIDATION_DIGITS = "maksimal {integer} digit bulat dan {fraction} desimal";
 
-    public static final String INVALID_FILTER_FIELD = "Field '%s' tidak dapat difilter";
-    public static final String INVALID_FILTER_VALUE = "Nilai filter untuk field '%s' tidak valid";
-    public static final String INVALID_SORT_FIELD = "Field '%s' tidak dapat diurutkan";
+    public static final String SIZE_SYSTEM_FORMAT = "^(EU|US|UK|CM)$";
+    public static final String VALIDATION_SIZE_SYSTEM = "harus EU, US, UK, atau CM";
 
     public static final int DEFAULT_PAGE = 0;
     public static final int DEFAULT_SIZE = 10;

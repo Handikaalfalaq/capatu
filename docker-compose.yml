@@ -2,6 +2,7 @@ services:
   shoe-db:
     image: postgres:16
     container_name: capatu-shoe-db
+    restart: unless-stopped
     environment:
       POSTGRES_DB: capatu_shoe
       POSTGRES_USER: capatu
