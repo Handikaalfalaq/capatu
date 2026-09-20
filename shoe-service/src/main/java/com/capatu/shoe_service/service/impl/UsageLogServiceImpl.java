@@ -35,7 +35,7 @@ public class UsageLogServiceImpl implements UsageLogService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UsageLogModel> findAll(){
+    public List<UsageLogModel> findAll() {
         return usageLogRepository.findAll();
     }
 
@@ -49,7 +49,7 @@ public class UsageLogServiceImpl implements UsageLogService {
 
     @Override
     @Transactional(readOnly = true)
-    public UsageLogModel findById(Long id){
+    public UsageLogModel findById(Long id) {
         return usageLogRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, Constants.NOT_FOUND.formatted(Constants.RESOURCE_USAGE_LOG)));
@@ -57,8 +57,8 @@ public class UsageLogServiceImpl implements UsageLogService {
 
     @Override
     @Transactional
-    public void create(UsageLogRequest request){
-        ShoeModel shoeModel = lockShoe(request.getShoeId());
+    public void create(UsageLogRequest request) {
+        ShoeModel shoeModel = findShoe(request.getShoeId());
         validateShoeActive(shoeModel);
         RefCodeModel refCodeModel = validateActivityTypeRef(request.getActivityTypeRefId());
         validateActivityDate(request.getActivityDate(), shoeModel);
@@ -69,11 +69,11 @@ public class UsageLogServiceImpl implements UsageLogService {
 
     @Override
     @Transactional
-    public void update(Long id, UsageLogRequest request){
+    public void update(Long id, UsageLogRequest request) {
         UsageLogModel usageLogExisting = findById(id);
         validateShoeUnchanged(usageLogExisting, request.getShoeId());
 
-        ShoeModel shoeModel = lockShoe(usageLogExisting.getShoe().getId());
+        ShoeModel shoeModel = findShoe(usageLogExisting.getShoe().getId());
         RefCodeModel refCodeModel = validateActivityTypeRef(request.getActivityTypeRefId());
         validateActivityDate(request.getActivityDate(), shoeModel);
 
@@ -83,50 +83,50 @@ public class UsageLogServiceImpl implements UsageLogService {
 
     @Override
     @Transactional
-    public void delete(Long id){
+    public void delete(Long id) {
         UsageLogModel usageLogExisting = findById(id);
-        ShoeModel shoeModel = lockShoe(usageLogExisting.getShoe().getId());
+        ShoeModel shoeModel = findShoe(usageLogExisting.getShoe().getId());
 
         usageLogRepository.delete(usageLogExisting);
         usageLogRepository.flush();
         recalculate(shoeModel);
     }
 
-    private ShoeModel lockShoe(Long shoeId){
-        return shoeRepository.findByIdForUpdate(shoeId)
+    private ShoeModel findShoe(Long shoeId) {
+        return shoeRepository.findById(shoeId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, Constants.NOT_FOUND.formatted(Constants.RESOURCE_SHOE)));
     }
 
-    private void validateShoeActive(ShoeModel shoeModel){
+    private void validateShoeActive(ShoeModel shoeModel) {
         if (Boolean.TRUE.equals(shoeModel.getRetired())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     Constants.SHOE_RETIRED.formatted(Constants.RESOURCE_SHOE));
         }
     }
 
-    private void validateShoeUnchanged(UsageLogModel usageLogExisting, Long requestedShoeId){
+    private void validateShoeUnchanged(UsageLogModel usageLogExisting, Long requestedShoeId) {
         if (!usageLogExisting.getShoe().getId().equals(requestedShoeId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     Constants.SHOE_CANNOT_CHANGE.formatted(Constants.RESOURCE_USAGE_LOG));
         }
     }
 
-    private RefCodeModel validateActivityTypeRef(Long activityTypeRefId){
+    private RefCodeModel validateActivityTypeRef(Long activityTypeRefId) {
         return refCodeRepository.findByIdInAndType(List.of(activityTypeRefId), Constants.ACTIVITY_TYPE).stream()
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, Constants.INVALID_ACTIVITY_TYPE_REF));
     }
 
-    private void validateActivityDate(LocalDate activityDate, ShoeModel shoeModel){
+    private void validateActivityDate(LocalDate activityDate, ShoeModel shoeModel) {
         if (activityDate.isBefore(shoeModel.getPurchaseDate())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     Constants.USAGE_BEFORE_PURCHASE.formatted(shoeModel.getPurchaseDate()));
         }
     }
 
-    private void recalculate(ShoeModel shoeModel){
+    private void recalculate(ShoeModel shoeModel) {
         UsageLogSummary summary = usageLogRepository.summarize(shoeModel.getId());
 
         shoeModel.setTotalDistanceKm(summary.getTotalDistanceKm());
@@ -137,7 +137,7 @@ public class UsageLogServiceImpl implements UsageLogService {
         shoeRepository.save(shoeModel);
     }
 
-    private UsageLogModel usageLogModel(UsageLogModel usageLogModel, UsageLogRequest request, ShoeModel shoeModel, RefCodeModel refCodeModel){
+    private UsageLogModel usageLogModel(UsageLogModel usageLogModel, UsageLogRequest request, ShoeModel shoeModel, RefCodeModel refCodeModel) {
         usageLogModel.setShoe(shoeModel);
         usageLogModel.setActivityDate(request.getActivityDate());
         usageLogModel.setDistanceKm(request.getDistanceKm());

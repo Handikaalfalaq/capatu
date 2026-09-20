@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,11 +30,12 @@ public class ShoeServiceImpl implements ShoeService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ShoeModel> findAll(){
+    public List<ShoeModel> findAll() {
         return shoeRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageResponse<ShoeModel> getPageableByFilters(ShoeSearchRequest request) {
         Page<ShoeModel> result = shoeRepository.findAll(toSpecification(request), request.toPageable());
 
@@ -43,7 +43,8 @@ public class ShoeServiceImpl implements ShoeService {
     }
 
     @Override
-    public ShoeModel findById(Long id){
+    @Transactional(readOnly = true)
+    public ShoeModel findById(Long id) {
         return shoeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, Constants.NOT_FOUND.formatted(Constants.RESOURCE_SHOE)));
@@ -51,7 +52,7 @@ public class ShoeServiceImpl implements ShoeService {
 
     @Override
     @Transactional
-    public void create(ShoeRequest request){
+    public void create(ShoeRequest request) {
         RefCodeModel shoeType = validateShoeType(request.getShoeTypeRefId());
         Set<RefCodeModel> features = validateFeatures(request.getFeatureRefIds());
 
@@ -60,7 +61,7 @@ public class ShoeServiceImpl implements ShoeService {
 
     @Override
     @Transactional
-    public void update(Long id, ShoeRequest request){
+    public void update(Long id, ShoeRequest request) {
         ShoeModel shoeExisting = findById(id);
 
         RefCodeModel shoeType = validateShoeType(request.getShoeTypeRefId());
@@ -71,7 +72,7 @@ public class ShoeServiceImpl implements ShoeService {
 
 
     @Override
-    public void delete(Long id){
+    public void delete(Long id) {
         ShoeModel shoeModel = findById(id);
 
         try {
@@ -82,39 +83,29 @@ public class ShoeServiceImpl implements ShoeService {
         }
     }
 
-    private RefCodeModel validateShoeType(Long shoeTypeRefId){
+    private RefCodeModel validateShoeType(Long shoeTypeRefId) {
         return refCodeRepository.findByIdInAndType(List.of(shoeTypeRefId), Constants.SHOE_TYPE).stream()
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, Constants.INVALID_SHOE_TYPE_REF));
     }
 
-    private Set<RefCodeModel> validateFeatures(Set<Long> featureRefIds){
+    private Set<RefCodeModel> validateFeatures(Set<Long> featureRefIds) {
         if (featureRefIds == null) {
             return null;
         }
+        if (featureRefIds.isEmpty()) {
+            return new HashSet<>();
+        }
 
-        Set<RefCodeModel> features = featureRefIds.isEmpty()
-                ? new HashSet<>()
-                : new HashSet<>(refCodeRepository.findByIdInAndType(featureRefIds, Constants.SHOE_FEATURE));
-
-        Set<Long> validIds = features.stream()
-                .map(RefCodeModel::getId)
-                .collect(Collectors.toSet());
-
-        List<Long> invalidIds = featureRefIds.stream()
-                .filter(id -> id == null || !validIds.contains(id))
-                .sorted(Comparator.nullsFirst(Comparator.naturalOrder()))
-                .toList();
-
-        if (!invalidIds.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    Constants.INVALID_FEATURE_REF.formatted(invalidIds));
+        Set<RefCodeModel> features = new HashSet<>(refCodeRepository.findByIdInAndType(featureRefIds, Constants.SHOE_FEATURE));
+        if (features.size() != featureRefIds.size()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.INVALID_FEATURE_REF);
         }
         return features;
     }
 
-    private ShoeModel shoeModel(ShoeModel shoeModel, ShoeRequest request, RefCodeModel refCodeModel, Set<RefCodeModel> features){
+    private ShoeModel shoeModel(ShoeModel shoeModel, ShoeRequest request, RefCodeModel refCodeModel, Set<RefCodeModel> features) {
         shoeModel.setName(request.getName());
         shoeModel.setBrand(request.getBrand());
         shoeModel.setModel(request.getModel());

@@ -22,7 +22,7 @@ public final class Constants {
     public static final String CODE_ALREADY_EXISTS = "Kode %s sudah ada untuk type %s";
 
     public static final String INVALID_SHOE_TYPE_REF = "shoeTypeRefId tidak valid, harus id jenis sepatu";
-    public static final String INVALID_FEATURE_REF = "featureRefIds tidak valid, id %s bukan fitur sepatu";
+    public static final String INVALID_FEATURE_REF = "featureRefIds tidak valid, semua id harus id fitur sepatu";
 
     public static final String INVALID_ACTIVITY_TYPE_REF = "activityTypeRefId tidak valid, harus id jenis aktivitas";
     public static final String SHOE_RETIRED = "%s sudah pensiun dan tidak bisa mencatat pemakaian baru";

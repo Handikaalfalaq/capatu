@@ -11,6 +11,59 @@ services:
       - "5433:5432"
     volumes:
       - capatu-shoe-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U capatu -d capatu_shoe"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  shoe-service:
+    build: ./shoe-service
+    container_name: capatu-shoe-service
+    depends_on:
+      shoe-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://shoe-db:5432/capatu_shoe
+      SPRING_DATASOURCE_USERNAME: capatu
+      SPRING_DATASOURCE_PASSWORD: capatu
+    ports:
+      - "8081:8081"
+
+  reminder-db:
+    image: postgres:16
+    container_name: capatu-reminder-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: capatu_reminder
+      POSTGRES_USER: capatu
+      POSTGRES_PASSWORD: capatu
+    ports:
+      - "5434:5432"
+    volumes:
+      - capatu-reminder-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U capatu -d capatu_reminder"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  reminder-service:
+    build: ./reminder-service
+    container_name: capatu-reminder-service
+    depends_on:
+      reminder-db:
+        condition: service_healthy
+      shoe-service:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://reminder-db:5432/capatu_reminder
+      SPRING_DATASOURCE_USERNAME: capatu
+      SPRING_DATASOURCE_PASSWORD: capatu
+      SHOE_SERVICE_BASE_URL: http://shoe-service:8081
+    ports:
+      - "8082:8082"
 
 volumes:
   capatu-shoe-data:
+  capatu-reminder-data:
