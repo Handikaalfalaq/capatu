@@ -1,11 +1,12 @@
 package com.capatu.shoe_service.constant;
 
-public final class MessageConstants {
+public final class Constants {
 
-    private MessageConstants() {
+    private Constants() {
     }
 
     public static final String RESOURCE_REF_CODE = "Referensi code";
+    public static final String RESOURCE_SHOE = "shoe";
 
     public static final String CREATED = "%s berhasil dibuat";
     public static final String UPDATED = "%s berhasil diubah";
@@ -15,7 +16,6 @@ public final class MessageConstants {
 
     public static final String CODE_ALREADY_EXISTS = "Kode %s sudah ada untuk type %s";
 
-    // Sepatu: id ref_code yang dikirim harus bertipe yang benar
     public static final String INVALID_SHOE_TYPE_REF = "shoeTypeRefId tidak valid, harus id jenis sepatu";
     public static final String INVALID_FEATURE_REF = "featureRefIds tidak valid, id %s bukan fitur sepatu";
 
@@ -40,4 +40,9 @@ public final class MessageConstants {
     public static final int DEFAULT_PAGE = 0;
     public static final int DEFAULT_SIZE = 10;
     public static final String DEFAULT_SORT_FIELD = "id";
+
+    public static final String SHOE_TYPE = "SHOE_TYPE";
+    public static final String SHOE_FEATURE = "SHOE_FEATURE";
+    public static final String ACTIVITY_TYPE = "ACTIVITY_TYPE";
+    public static final String MAINTENANCE_ACTION = "MAINTENANCE_ACTION";
 }

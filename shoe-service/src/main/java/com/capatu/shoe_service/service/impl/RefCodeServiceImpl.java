@@ -1,6 +1,6 @@
 package com.capatu.shoe_service.service.impl;
 
-import com.capatu.shoe_service.constant.MessageConstants;
+import com.capatu.shoe_service.constant.Constants;
 import com.capatu.shoe_service.dto.request.RefCodeRequest;
 import com.capatu.shoe_service.dto.request.RefCodeSearchRequest;
 import com.capatu.shoe_service.dto.response.PageResponse;
@@ -47,7 +47,7 @@ public class RefCodeServiceImpl implements RefCodeService {
     public RefCodeModel findById(Long id){
         return refCodeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, MessageConstants.NOT_FOUND.formatted(MessageConstants.RESOURCE_REF_CODE)));
+                        HttpStatus.NOT_FOUND, Constants.NOT_FOUND.formatted(Constants.RESOURCE_REF_CODE)));
     }
 
     @Override
@@ -93,7 +93,7 @@ public class RefCodeServiceImpl implements RefCodeService {
             refCodeRepository.delete(refCode);
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    MessageConstants.IN_USE.formatted(MessageConstants.RESOURCE_REF_CODE));
+                    Constants.IN_USE.formatted(Constants.RESOURCE_REF_CODE));
         }
     }
 
@@ -104,7 +104,7 @@ public class RefCodeServiceImpl implements RefCodeService {
 
         if (isDuplicate) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    MessageConstants.CODE_ALREADY_EXISTS.formatted(request.getCodeName(), request.getTypeName()));
+                    Constants.CODE_ALREADY_EXISTS.formatted(request.getCodeName(), request.getTypeName()));
         }
     }
 

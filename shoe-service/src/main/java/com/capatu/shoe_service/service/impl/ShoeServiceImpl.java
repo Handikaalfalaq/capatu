@@ -1,7 +1,6 @@
 package com.capatu.shoe_service.service.impl;
 
-import com.capatu.shoe_service.constant.MessageConstants;
-import com.capatu.shoe_service.constant.RefCodeTypes;
+import com.capatu.shoe_service.constant.Constants;
 import com.capatu.shoe_service.dto.request.ShoeRequest;
 import com.capatu.shoe_service.dto.request.ShoeSearchRequest;
 import com.capatu.shoe_service.dto.response.PageResponse;
@@ -48,7 +47,7 @@ public class ShoeServiceImpl implements ShoeService {
     public ShoeModel findById(Long id){
         return shoeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, MessageConstants.NOT_FOUND.formatted(MessageConstants.RESOURCE_REF_CODE)));
+                        HttpStatus.NOT_FOUND, Constants.NOT_FOUND.formatted(Constants.RESOURCE_REF_CODE)));
     }
 
     @Override
@@ -80,15 +79,15 @@ public class ShoeServiceImpl implements ShoeService {
             shoeRepository.delete(shoeModel);
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    MessageConstants.IN_USE.formatted(MessageConstants.RESOURCE_REF_CODE));
+                    Constants.IN_USE.formatted(Constants.RESOURCE_REF_CODE));
         }
     }
 
     private RefCodeModel validateShoeType(Long shoeTypeRefId){
-        return refCodeRepository.findByIdInAndType(List.of(shoeTypeRefId), RefCodeTypes.SHOE_TYPE).stream()
+        return refCodeRepository.findByIdInAndType(List.of(shoeTypeRefId), Constants.SHOE_TYPE).stream()
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, MessageConstants.INVALID_SHOE_TYPE_REF));
+                        HttpStatus.BAD_REQUEST, Constants.INVALID_SHOE_TYPE_REF));
     }
 
     private Set<RefCodeModel> validateFeatures(Set<Long> featureRefIds){
@@ -98,7 +97,7 @@ public class ShoeServiceImpl implements ShoeService {
 
         Set<RefCodeModel> features = featureRefIds.isEmpty()
                 ? new HashSet<>()
-                : new HashSet<>(refCodeRepository.findByIdInAndType(featureRefIds, RefCodeTypes.SHOE_FEATURE));
+                : new HashSet<>(refCodeRepository.findByIdInAndType(featureRefIds, Constants.SHOE_FEATURE));
 
         Set<Long> validIds = features.stream()
                 .map(RefCodeModel::getId)
@@ -111,7 +110,7 @@ public class ShoeServiceImpl implements ShoeService {
 
         if (!invalidIds.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    MessageConstants.INVALID_FEATURE_REF.formatted(invalidIds));
+                    Constants.INVALID_FEATURE_REF.formatted(invalidIds));
         }
         return features;
     }

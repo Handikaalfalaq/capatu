@@ -1,11 +1,10 @@
 package com.capatu.shoe_service.controller;
 
 
-import com.capatu.shoe_service.constant.MessageConstants;
+import com.capatu.shoe_service.constant.Constants;
 import com.capatu.shoe_service.dto.request.ShoeRequest;
 import com.capatu.shoe_service.dto.request.ShoeSearchRequest;
 import com.capatu.shoe_service.dto.response.ApiResponse;
-import com.capatu.shoe_service.service.RefCodeService;
 import com.capatu.shoe_service.service.ShoeService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +43,7 @@ public class ShoeController {
         shoeService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse(HttpStatus.CREATED.value(),
-                        MessageConstants.CREATED.formatted(MessageConstants.RESOURCE_REF_CODE)));
+                        Constants.CREATED.formatted(Constants.RESOURCE_SHOE)));
     }
 
     @PutMapping("/{id}")
@@ -52,7 +51,7 @@ public class ShoeController {
         shoeService.update(id, request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(HttpStatus.OK.value(),
-                        MessageConstants.UPDATED.formatted(MessageConstants.RESOURCE_REF_CODE)));
+                        Constants.UPDATED.formatted(Constants.RESOURCE_SHOE)));
     }
 
     @DeleteMapping("/{id}")
@@ -60,6 +59,6 @@ public class ShoeController {
         shoeService.delete(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(HttpStatus.OK.value(),
-                        MessageConstants.DELETED.formatted(MessageConstants.RESOURCE_REF_CODE)));
+                        Constants.DELETED.formatted(Constants.RESOURCE_SHOE)));
     }
 }

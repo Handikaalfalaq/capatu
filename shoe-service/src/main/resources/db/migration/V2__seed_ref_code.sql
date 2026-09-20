@@ -1,5 +1,3 @@
--- code diturunkan dari code_name: huruf besar, spasi jadi underscore (sama seperti type dari type_name).
-
 INSERT INTO ref_code (type, type_name, code, code_name)
 VALUES ('SHOE_TYPE', 'shoe type', 'SEPATU_LARI',   'Sepatu Lari'),
        ('SHOE_TYPE', 'shoe type', 'SEPATU_TRAIL',  'Sepatu Trail'),

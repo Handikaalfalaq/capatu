@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface ShoeRepository extends JpaRepository<ShoeModel, Long>, JpaSpecificationExecutor<ShoeModel> {
 
-    /** Pencarian berhalaman; jenis sepatu ikut diambil dalam query yang sama (JOIN) supaya tidak N+1. */
     @Override
     @EntityGraph(attributePaths = "shoeTypeRef")
     Page<ShoeModel> findAll(Specification<ShoeModel> specification, Pageable pageable);
