@@ -5,7 +5,6 @@ import com.capatu.reminder_service.dto.response.ApiErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,8 +20,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiErrorResponse> handleResponseStatus(ResponseStatusException ex, HttpServletRequest request) {
-        String message = ex.getReason() != null ? ex.getReason() : reasonPhrase(ex.getStatusCode());
-        return build(ex.getStatusCode(), message, request);
+        HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
+        return build(status, ex.getReason() != null ? ex.getReason() : status.getReasonPhrase(), request);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -39,20 +38,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleOther(Exception ex, HttpServletRequest request) {
         if (ex instanceof ErrorResponse springError) {
-            return build(springError.getStatusCode(), springError.getBody().getDetail(), request);
+            return build(HttpStatus.valueOf(springError.getStatusCode().value()), springError.getBody().getDetail(), request);
         }
         log.error("Kesalahan tak terduga", ex);
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "Terjadi kesalahan pada server", request);
     }
 
-    private ResponseEntity<ApiErrorResponse> build(HttpStatusCode status, String message, HttpServletRequest request) {
-        ApiErrorResponse body = new ApiErrorResponse(Instant.now(), status.value(), reasonPhrase(status),
+    private ResponseEntity<ApiErrorResponse> build(HttpStatus status, String message, HttpServletRequest request) {
+        ApiErrorResponse body = new ApiErrorResponse(Instant.now(), status.value(), status.getReasonPhrase(),
                 message, request.getRequestURI());
         return ResponseEntity.status(status).body(body);
-    }
-
-    private String reasonPhrase(HttpStatusCode status) {
-        HttpStatus resolved = HttpStatus.resolve(status.value());
-        return resolved != null ? resolved.getReasonPhrase() : "Error";
     }
 }

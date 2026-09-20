@@ -39,9 +39,6 @@ public class ReminderModel extends DefaultModel {
     @Column(name = "detected_at", nullable = false)
     private LocalDateTime detectedAt;
 
-    @Column(name = "acknowledged_at")
-    private LocalDateTime acknowledgedAt;
-
     @Column(name = "resolved_at")
     private LocalDateTime resolvedAt;
 }

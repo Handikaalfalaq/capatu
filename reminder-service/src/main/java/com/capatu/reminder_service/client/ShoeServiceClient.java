@@ -5,13 +5,10 @@ import com.capatu.reminder_service.client.dto.ShoeSnapshot;
 import com.capatu.reminder_service.constant.Constants;
 import com.capatu.reminder_service.exception.ShoeServiceUnavailableException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
-import java.net.http.HttpClient;
-import java.time.Duration;
 import java.util.List;
 
 @Component
@@ -19,19 +16,8 @@ public class ShoeServiceClient {
 
     private final RestClient restClient;
 
-    public ShoeServiceClient(@Value("${shoe-service.base-url}") String baseUrl,
-                             @Value("${shoe-service.connect-timeout-ms}") long connectTimeoutMs,
-                             @Value("${shoe-service.read-timeout-ms}") long readTimeoutMs) {
-        HttpClient httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofMillis(connectTimeoutMs))
-                .build();
-        JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
-        requestFactory.setReadTimeout(Duration.ofMillis(readTimeoutMs));
-
-        this.restClient = RestClient.builder()
-                .baseUrl(baseUrl)
-                .requestFactory(requestFactory)
-                .build();
+    public ShoeServiceClient(RestClient.Builder restClientBuilder, @Value("${shoe-service.base-url}") String baseUrl) {
+        this.restClient = restClientBuilder.baseUrl(baseUrl).build();
     }
 
     public List<ShoeSnapshot> fetchShoes() {

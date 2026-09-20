@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -27,31 +28,36 @@ public class RefCodeServiceImpl implements RefCodeService {
     private final RefCodeRepository refCodeRepository;
 
     @Override
-    public List<RefCodeResponse> findAllCode(){
+    @Transactional(readOnly = true)
+    public List<RefCodeResponse> findAllCode() {
         return refCodeRepository.findAllCode();
     }
 
     @Override
-    public List<RefCodeModel> allRefCodeByType(String type){
+    @Transactional(readOnly = true)
+    public List<RefCodeModel> allRefCodeByType(String type) {
         return refCodeRepository.allRefCodeByType(type);
     }
 
     @Override
-    public PageResponse<RefCodeModel> getPageableByFilters(RefCodeSearchRequest request){
+    @Transactional(readOnly = true)
+    public PageResponse<RefCodeModel> getPageableByFilters(RefCodeSearchRequest request) {
         Page<RefCodeModel> result = refCodeRepository.findAll(toSpecification(request), request.toPageable());
 
         return PageResponse.from(result);
     }
 
     @Override
-    public RefCodeModel findById(Long id){
+    @Transactional(readOnly = true)
+    public RefCodeModel findById(Long id) {
         return refCodeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, Constants.NOT_FOUND.formatted(Constants.RESOURCE_REF_CODE)));
     }
 
     @Override
-    public void create(RefCodeRequest request){
+    @Transactional
+    public void create(RefCodeRequest request) {
         String type = TypeNameUtils.toType(request.getTypeName());
         String code = TypeNameUtils.toType(request.getCodeName());
 
@@ -68,7 +74,8 @@ public class RefCodeServiceImpl implements RefCodeService {
     }
 
     @Override
-    public void update(Long id, RefCodeRequest request){
+    @Transactional
+    public void update(Long id, RefCodeRequest request) {
         RefCodeModel refCodeExisting = findById(id);
 
         String type = TypeNameUtils.toType(request.getTypeName());
@@ -97,7 +104,7 @@ public class RefCodeServiceImpl implements RefCodeService {
     }
 
     @Override
-    public void delete(Long id){
+    public void delete(Long id) {
         RefCodeModel refCode = findById(id);
 
         try {
@@ -108,7 +115,7 @@ public class RefCodeServiceImpl implements RefCodeService {
         }
     }
 
-    private void validateUniqueCodeType(RefCodeRequest request, String type, String code, Long id){
+    private void validateUniqueCodeType(RefCodeRequest request, String type, String code, Long id) {
         boolean isDuplicate = refCodeRepository.findByTypeAndCode(type, code)
                 .filter(found -> !found.getId().equals(id))
                 .isPresent();
@@ -119,7 +126,7 @@ public class RefCodeServiceImpl implements RefCodeService {
         }
     }
 
-    private Specification<RefCodeModel> toSpecification(RefCodeSearchRequest request){
+    private Specification<RefCodeModel> toSpecification(RefCodeSearchRequest request) {
         return Specification.allOf(
                 SpecificationUtils.equal("type", request.getType()),
                 SpecificationUtils.contains("codeName", request.getCodeName()));

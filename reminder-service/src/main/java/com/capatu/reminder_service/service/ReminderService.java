@@ -13,7 +13,5 @@ public interface ReminderService {
 
     ReminderResponse findById(Long id);
 
-    void acknowledge(Long id);
-
     EvaluationResult evaluate();
 }

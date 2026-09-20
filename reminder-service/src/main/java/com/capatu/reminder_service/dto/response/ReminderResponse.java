@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 
 public record ReminderResponse(Long id, Long shoeId, String shoeName, ReminderType type, ReminderSeverity severity,
                                String message, ReminderStatus status, LocalDateTime detectedAt,
-                               LocalDateTime acknowledgedAt, LocalDateTime resolvedAt) {
+                               LocalDateTime resolvedAt) {
 
     public static ReminderResponse from(ReminderModel reminder) {
         return new ReminderResponse(reminder.getId(), reminder.getShoeId(), reminder.getShoeName(),
                 reminder.getType(), reminder.getSeverity(), reminder.getMessage(), reminder.getStatus(),
-                reminder.getDetectedAt(), reminder.getAcknowledgedAt(), reminder.getResolvedAt());
+                reminder.getDetectedAt(), reminder.getResolvedAt());
     }
 }

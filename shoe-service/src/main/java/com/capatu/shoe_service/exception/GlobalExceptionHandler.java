@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.ErrorResponse;
@@ -24,8 +23,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiErrorResponse> handleResponseStatus(ResponseStatusException ex, HttpServletRequest request) {
-        String message = ex.getReason() != null ? ex.getReason() : reasonPhrase(ex.getStatusCode());
-        return build(ex.getStatusCode(), message, request, null);
+        HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
+        return build(status, ex.getReason() != null ? ex.getReason() : status.getReasonPhrase(), request, null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -36,14 +35,9 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "Validasi gagal", request, errors);
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiErrorResponse> handleUnreadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
-        return build(HttpStatus.BAD_REQUEST, "Body request tidak valid atau bukan JSON yang benar", request, null);
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ApiErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
-        return build(HttpStatus.BAD_REQUEST, "Parameter '" + ex.getName() + "' tidak valid", request, null);
+    @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ApiErrorResponse> handleBadRequest(Exception ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Body atau parameter request tidak valid", request, null);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -55,21 +49,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleOther(Exception ex, HttpServletRequest request) {
         if (ex instanceof ErrorResponse springError) {
-            return build(springError.getStatusCode(), springError.getBody().getDetail(), request, null);
+            return build(HttpStatus.valueOf(springError.getStatusCode().value()), springError.getBody().getDetail(), request, null);
         }
         log.error("Kesalahan tak terduga", ex);
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "Terjadi kesalahan pada server", request, null);
     }
 
-    private ResponseEntity<ApiErrorResponse> build(HttpStatusCode status, String message, HttpServletRequest request,
+    private ResponseEntity<ApiErrorResponse> build(HttpStatus status, String message, HttpServletRequest request,
                                                    List<ApiErrorResponse.FieldError> errors) {
-        ApiErrorResponse body = new ApiErrorResponse(Instant.now(), status.value(), reasonPhrase(status),
+        ApiErrorResponse body = new ApiErrorResponse(Instant.now(), status.value(), status.getReasonPhrase(),
                 message, request.getRequestURI(), errors);
         return ResponseEntity.status(status).body(body);
-    }
-
-    private String reasonPhrase(HttpStatusCode status) {
-        HttpStatus resolved = HttpStatus.resolve(status.value());
-        return resolved != null ? resolved.getReasonPhrase() : "Error";
     }
 }

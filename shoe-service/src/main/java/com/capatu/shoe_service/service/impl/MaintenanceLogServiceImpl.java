@@ -36,7 +36,7 @@ public class MaintenanceLogServiceImpl implements MaintenanceLogService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MaintenanceLogModel> findAll(){
+    public List<MaintenanceLogModel> findAll() {
         return maintenanceLogRepository.findAll();
     }
 
@@ -50,7 +50,7 @@ public class MaintenanceLogServiceImpl implements MaintenanceLogService {
 
     @Override
     @Transactional(readOnly = true)
-    public MaintenanceLogModel findById(Long id){
+    public MaintenanceLogModel findById(Long id) {
         return maintenanceLogRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, Constants.NOT_FOUND.formatted(Constants.RESOURCE_MAINTENANCE_LOG)));
@@ -58,8 +58,8 @@ public class MaintenanceLogServiceImpl implements MaintenanceLogService {
 
     @Override
     @Transactional
-    public void create(MaintenanceLogRequest request){
-        ShoeModel shoeModel = lockShoe(request.getShoeId());
+    public void create(MaintenanceLogRequest request) {
+        ShoeModel shoeModel = findShoe(request.getShoeId());
         validateShoeActive(shoeModel);
         RefCodeModel refCodeModel = validateActionRef(request.getActionRefId());
         validateActionDate(request.getActionDate(), shoeModel);
@@ -70,11 +70,11 @@ public class MaintenanceLogServiceImpl implements MaintenanceLogService {
 
     @Override
     @Transactional
-    public void update(Long id, MaintenanceLogRequest request){
+    public void update(Long id, MaintenanceLogRequest request) {
         MaintenanceLogModel maintenanceLogExisting = findById(id);
         validateShoeUnchanged(maintenanceLogExisting, request.getShoeId());
 
-        ShoeModel shoeModel = lockShoe(maintenanceLogExisting.getShoe().getId());
+        ShoeModel shoeModel = findShoe(maintenanceLogExisting.getShoe().getId());
         RefCodeModel refCodeModel = validateActionRef(request.getActionRefId());
         validateActionDate(request.getActionDate(), shoeModel);
 
@@ -84,50 +84,50 @@ public class MaintenanceLogServiceImpl implements MaintenanceLogService {
 
     @Override
     @Transactional
-    public void delete(Long id){
+    public void delete(Long id) {
         MaintenanceLogModel maintenanceLogExisting = findById(id);
-        ShoeModel shoeModel = lockShoe(maintenanceLogExisting.getShoe().getId());
+        ShoeModel shoeModel = findShoe(maintenanceLogExisting.getShoe().getId());
 
         maintenanceLogRepository.delete(maintenanceLogExisting);
         maintenanceLogRepository.flush();
         recalculate(shoeModel);
     }
 
-    private ShoeModel lockShoe(Long shoeId){
-        return shoeRepository.findByIdForUpdate(shoeId)
+    private ShoeModel findShoe(Long shoeId) {
+        return shoeRepository.findById(shoeId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, Constants.NOT_FOUND.formatted(Constants.RESOURCE_SHOE)));
     }
 
-    private void validateShoeActive(ShoeModel shoeModel){
+    private void validateShoeActive(ShoeModel shoeModel) {
         if (Boolean.TRUE.equals(shoeModel.getRetired())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     Constants.SHOE_RETIRED_MAINTENANCE.formatted(Constants.RESOURCE_SHOE));
         }
     }
 
-    private void validateShoeUnchanged(MaintenanceLogModel maintenanceLogExisting, Long requestedShoeId){
+    private void validateShoeUnchanged(MaintenanceLogModel maintenanceLogExisting, Long requestedShoeId) {
         if (!maintenanceLogExisting.getShoe().getId().equals(requestedShoeId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     Constants.SHOE_CANNOT_CHANGE.formatted(Constants.RESOURCE_MAINTENANCE_LOG));
         }
     }
 
-    private RefCodeModel validateActionRef(Long actionRefId){
+    private RefCodeModel validateActionRef(Long actionRefId) {
         return refCodeRepository.findByIdInAndType(List.of(actionRefId), Constants.MAINTENANCE_ACTION).stream()
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, Constants.INVALID_MAINTENANCE_ACTION_REF));
     }
 
-    private void validateActionDate(LocalDate actionDate, ShoeModel shoeModel){
+    private void validateActionDate(LocalDate actionDate, ShoeModel shoeModel) {
         if (actionDate.isBefore(shoeModel.getPurchaseDate())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     Constants.ACTION_BEFORE_PURCHASE.formatted(shoeModel.getPurchaseDate()));
         }
     }
 
-    private void recalculate(ShoeModel shoeModel){
+    private void recalculate(ShoeModel shoeModel) {
         shoeModel.setLastWashedAt(maintenanceLogRepository.findLastActionDate(shoeModel.getId(), Constants.WASH_CODE));
         shoeRepository.saveAndFlush(shoeModel);
 
@@ -137,7 +137,7 @@ public class MaintenanceLogServiceImpl implements MaintenanceLogService {
         shoeRepository.save(shoeModel);
     }
 
-    private MaintenanceLogModel maintenanceLogModel(MaintenanceLogModel maintenanceLogModel, MaintenanceLogRequest request, ShoeModel shoeModel, RefCodeModel refCodeModel){
+    private MaintenanceLogModel maintenanceLogModel(MaintenanceLogModel maintenanceLogModel, MaintenanceLogRequest request, ShoeModel shoeModel, RefCodeModel refCodeModel) {
         maintenanceLogModel.setShoe(shoeModel);
         maintenanceLogModel.setActionRef(refCodeModel);
         maintenanceLogModel.setActionDate(request.getActionDate());
